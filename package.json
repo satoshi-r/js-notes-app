@@ -1,5 +1,5 @@
 {
-	"name": "gulp-webpack",
+	"name": "js-notes-app",
 	"version": "1.0.0",
 	"description": "gulp + webpack starter",
 	"main": "index.js",
@@ -37,7 +37,5 @@
 		"webpack": "^4.41.6",
 		"webpack-stream": "^5.2.1"
 	},
-	"dependencies": {
-		"jquery": "^3.4.1"
-	}
+	"dependencies": {}
 }
