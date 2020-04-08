@@ -19,16 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return result
     }
 
-    const createNote = ({id, date, text} = {}) => {
+    const createNote = ({date, text} = {}) => {
         const note = document.createElement('div');
         note.className = 'note'
-        note.setAttribute('data-note-id', id)
         note.insertAdjacentHTML('afterbegin',
             `<div class="note-header">
-            <div class="note-date">${date}</div>
-            <button class="note-del" title="Удалить заметку"></button>
-        </div>
-        <textarea class="note-textarea" spellcheck="false">${text || ''}</textarea>
+                <div class="note-date">${date}</div>
+                <button class="note-del" title="Удалить заметку"></button>
+            </div>
+            <textarea class="note-textarea" spellcheck="false" contenteditable="true">${text || ''}</textarea>
         `)
 
         return note
@@ -49,9 +48,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         notes.forEach(item => {
             item.addEventListener('click', (e) => {
-                if (e.target.className !== 'note-del') return
-                item.remove();
-            })
+                
+                if (e.target.className == 'note-del') {
+                    item.remove();
+                // } else if (e.target.className == 'edit-bold__label') {
+                //     const input = e.target.control;
+                //     const textarea = e.target.offsetParent.nextElementSibling;
+                //     const start = textarea.selectionStart;
+                //     const end = textarea.selectionEnd;
+
+
+                //     if (start != end) {
+                //         const text = textarea.value;
+                //         textarea.value = text.substring(0, start) + '<b>' + text.substring(start, end) + '</b>' + text.substring(end);
+                //     }
+
+                //     let sel = end + 7;
+                //     textarea.setSelectionRange(sel, sel);
+                } else {    
+                    return;
+                }
+                    
+
+            });
+
         })
     }
 
