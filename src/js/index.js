@@ -54,7 +54,7 @@ const notes = [
 
     const noteTemplate = ({_id, date, text} = {}) => {
         const div = document.createElement('div');
-        div.className = 'note',
+        div.className = 'note fadeIn',
         div.setAttribute('data-id', _id);
         div.insertAdjacentHTML('afterbegin',
             `<div class="note-header">
@@ -95,7 +95,11 @@ const notes = [
         if (!target.classList.contains('note-del')) return;
         const parent = target.closest('[data-id]');
         const id = parent.dataset.id;
-        deleteNote(id, parent);
+        parent.classList.remove('fadeIn');
+        setTimeout(() => {
+           deleteNote(id, parent);
+        }, 300);
+
     }
 
     addBtn.addEventListener('click', addNote);
