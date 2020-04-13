@@ -1,28 +1,62 @@
-document.addEventListener('DOMContentLoaded', () => {
+const getDate = (format) => {
+    const date = new Date()
+    const replaces = {
+        yyyy: date.getFullYear(),
+        mm: ('0' + (date.getMonth() + 1)).slice(-2),
+        dd: ('0' + date.getDate()).slice(-2),
+        hh: ('0' + date.getHours()).slice(-2),
+        MM: ('0' + date.getMinutes()).slice(-2),
+    }
+    let result = format
+    for (const replace in replaces) {
+        result = result.replace(replace, replaces[replace]);
+    }
+    return result
+}
+const dateFormat = 'dd-mm-yyyy hh:MM';
+const randomString = i => {
+    var rnd = '';
+    while (rnd.length < i)
+        rnd += Math.random().toString(36).substring(2);
+    return rnd.substring(0, i);
+}
 
+const notes = [
+    {
+        _id: randomString(8),
+        date: getDate(dateFormat),
+        text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos, et.'
+    },
+];
+
+(function (arrOfNotes) {
     const addBtn = document.querySelector('.note-add');
     const container = document.querySelector('.container');
+    
+    const objOfNotes = arrOfNotes.reduce((acc, note) => {
+        acc[note._id] = note;
+        return acc;
+    }, {});
 
-    const getDate = (format) => {
-        const date = new Date()
-        const replaces = {
-            yyyy: date.getFullYear(),
-            mm: ('0' + (date.getMonth() + 1)).slice(-2),
-            dd: ('0' + date.getDate()).slice(-2),
-            hh: ('0' + date.getHours()).slice(-2),
-            MM: ('0' + date.getMinutes()).slice(-2),
+    const renderAllNotes = notesList => {
+        if (!notesList) {
+            console.error('Нет заметок');
+            return;
         }
-        let result = format
-        for (const replace in replaces) {
-            result = result.replace(replace, replaces[replace]);
-        }
-        return result
+
+        const fragment = document.createDocumentFragment();
+        Object.values(notesList).forEach(note => {
+            const div = noteTemplate(note);
+            fragment.appendChild(div);
+        });
+        container.appendChild(fragment);
     }
 
-    const createNote = ({date, text} = {}) => {
-        const note = document.createElement('div');
-        note.className = 'note'
-        note.insertAdjacentHTML('afterbegin',
+    const noteTemplate = ({_id, date, text} = {}) => {
+        const div = document.createElement('div');
+        div.className = 'note',
+        div.setAttribute('data-id', _id);
+        div.insertAdjacentHTML('afterbegin',
             `<div class="note-header">
                 <div class="note-date">${date}</div>
                 <button class="note-del" title="Удалить заметку"></button>
@@ -30,55 +64,43 @@ document.addEventListener('DOMContentLoaded', () => {
             <textarea class="note-textarea" spellcheck="false" contenteditable="true">${text || ''}</textarea>
         `)
 
-        return note
+        return div
     }
 
-    const addNote = text => {
-        const params = {
-            date: getDate('dd-mm-yyyy hh:MM'),
-            text
-        }
-        const note = createNote(params);
-        container.appendChild(note);
-        removeNote();
+    const addNote = () => {
+        const date = getDate(dateFormat);
+        const note = createNote(date);
+        const item = noteTemplate(note);
+        container.insertAdjacentElement('afterbegin', item);
     }
 
-    const removeNote = () => {
-        const notes = document.querySelectorAll('.note');
+    const createNote = date => {
+        const newNote = {
+            _id: randomString(8),
+            date,
+            text: ''
+        };
 
-        notes.forEach(item => {
-            item.addEventListener('click', (e) => {
-                
-                if (e.target.className == 'note-del') {
-                    item.remove();
-                // } else if (e.target.className == 'edit-bold__label') {
-                //     const input = e.target.control;
-                //     const textarea = e.target.offsetParent.nextElementSibling;
-                //     const start = textarea.selectionStart;
-                //     const end = textarea.selectionEnd;
+        objOfNotes[newNote._id] = newNote;
 
-
-                //     if (start != end) {
-                //         const text = textarea.value;
-                //         textarea.value = text.substring(0, start) + '<b>' + text.substring(start, end) + '</b>' + text.substring(end);
-                //     }
-
-                //     let sel = end + 7;
-                //     textarea.setSelectionRange(sel, sel);
-                } else {    
-                    return;
-                }
-                    
-
-            });
-
-        })
+        return { ...newNote };
     }
 
-    addNote('Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos, et.');
+    const deleteNote = (id, el) => {
+        delete objOfNotes[id];
+        el.remove();
+    }
 
-    addBtn.addEventListener('click', () => {
-        addNote();
-    })
+    const onDeleteHandler = ({target}) => {
+        if (!target.classList.contains('note-del')) return;
+        const parent = target.closest('[data-id]');
+        const id = parent.dataset.id;
+        deleteNote(id, parent);
+    }
 
-})
+    addBtn.addEventListener('click', addNote);
+    container.addEventListener('click', onDeleteHandler);
+
+    renderAllNotes(objOfNotes);
+
+})(notes);
