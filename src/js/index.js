@@ -29,6 +29,10 @@ const notes = [
     },
 ];
 
+const lastNotes = Object.values(JSON.parse(localStorage.getItem('notes') || false));
+
+const inputArrOfNotes = () => (lastNotes.length == 0) ? notes : lastNotes;
+
 (function (arrOfNotes) {
     const addBtn = document.querySelector('.note-add');
     const container = document.querySelector('.container');
@@ -71,7 +75,7 @@ const notes = [
         const date = getDate(dateFormat);
         const note = createNote(date);
         const item = noteTemplate(note);
-        container.insertAdjacentElement('afterbegin', item);
+        container.appendChild(item);
     }
 
     const createNote = date => {
@@ -82,13 +86,15 @@ const notes = [
         };
 
         objOfNotes[newNote._id] = newNote;
-
+        localStorage.setItem('notes', JSON.stringify(objOfNotes));
+        
         return { ...newNote };
     }
 
     const deleteNote = (id, el) => {
         delete objOfNotes[id];
         el.remove();
+        localStorage.setItem('notes', JSON.stringify(objOfNotes));
     }
 
     const onDeleteHandler = ({target}) => {
@@ -99,12 +105,20 @@ const notes = [
         setTimeout(() => {
            deleteNote(id, parent);
         }, 300);
+    }
 
+    const onTextChangeHander = ({target}) => {
+        if (!target.classList.contains('note-textarea')) return;
+        const parent = target.closest('[data-id]');
+        const id = parent.dataset.id;
+        objOfNotes[id].text = target.value;
+        localStorage.setItem('notes', JSON.stringify(objOfNotes));
     }
 
     addBtn.addEventListener('click', addNote);
     container.addEventListener('click', onDeleteHandler);
+    container.addEventListener('input', onTextChangeHander);
 
     renderAllNotes(objOfNotes);
 
-})(notes);
+})(inputArrOfNotes());
