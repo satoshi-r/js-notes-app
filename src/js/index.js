@@ -76,6 +76,10 @@ const inputArrOfNotes = () => (lastNotes.length == 0) ? notes : lastNotes;
         const note = createNote(date);
         const item = noteTemplate(note);
         container.appendChild(item);
+        item.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        })
     }
 
     const createNote = date => {
