@@ -90,6 +90,13 @@ main {
         width: 100%;
         resize: none;
         position: relative;
+        overflow: hidden;
+        min-height: 280px;
+        overflow-wrap: break-word;
+
+        div {
+            white-space: normal;
+        }
     }
 }
 

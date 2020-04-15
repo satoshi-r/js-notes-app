@@ -30,8 +30,7 @@ const notes = [
 ];
 
 const lastNotes = Object.values(JSON.parse(localStorage.getItem('notes') || false));
-
-const inputArrOfNotes = () => (lastNotes.length == 0) ? notes : lastNotes;
+const inputArrOfNotes = (lastNotes.length == 0) ? notes : lastNotes;
 
 (function (arrOfNotes) {
     const addBtn = document.querySelector('.note-add');
@@ -65,7 +64,7 @@ const inputArrOfNotes = () => (lastNotes.length == 0) ? notes : lastNotes;
                 <div class="note-date">${date}</div>
                 <button class="note-del" title="Удалить заметку"></button>
             </div>
-            <textarea class="note-textarea" spellcheck="false" contenteditable="true">${text || ''}</textarea>
+            <div class="note-textarea" spellcheck="false" contenteditable="true">${text || ''}</div>
         `)
 
         return div
@@ -115,7 +114,7 @@ const inputArrOfNotes = () => (lastNotes.length == 0) ? notes : lastNotes;
         if (!target.classList.contains('note-textarea')) return;
         const parent = target.closest('[data-id]');
         const id = parent.dataset.id;
-        objOfNotes[id].text = target.value;
+        objOfNotes[id].text = target.innerHTML;
         localStorage.setItem('notes', JSON.stringify(objOfNotes));
     }
 
@@ -125,4 +124,4 @@ const inputArrOfNotes = () => (lastNotes.length == 0) ? notes : lastNotes;
 
     renderAllNotes(objOfNotes);
 
-})(inputArrOfNotes());
+})(inputArrOfNotes);
