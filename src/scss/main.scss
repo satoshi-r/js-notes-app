@@ -100,3 +100,18 @@ main {
     }
 }
 
+@media screen and (max-width: 540px) {
+    main {
+        padding-top: 40px;
+    } 
+    
+    .note {
+        width: 97%;
+
+        &-add {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+}
